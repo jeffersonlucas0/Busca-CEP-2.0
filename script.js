@@ -87,26 +87,44 @@ function mostrarEndereco(dados) {
 async function localizarNoMapa(dados) {
   legenda.textContent = 'localizando no mapa...';
 
-  // Monta um endereço legível para o Nominatim buscar
-  const partes = [dados.logradouro, dados.bairro, dados.localidade, dados.uf, 'Brasil']
-    .filter(Boolean)
-    .join(', ');
+  // Tenta do mais específico pro mais genérico, até achar uma coordenada
+  const tentativas = [
+    [dados.logradouro, dados.bairro, dados.localidade, dados.uf],
+    [dados.bairro, dados.localidade, dados.uf],
+    [dados.localidade, dados.uf]
+  ].map(partes => partes.filter(Boolean).join(', ') + ', Brasil');
 
-  const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(partes)}`;
+  let resultado = null;
 
-  const resposta = await fetch(url, {
-    headers: { 'Accept-Language': 'pt-BR' }
-  });
-  const resultados = await resposta.json();
+  for (const consulta of tentativas) {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(consulta)}`;
+    const resposta = await fetch(url, { headers: { 'Accept-Language': 'pt-BR' } });
 
-  if (!resultados || resultados.length === 0) {
-    legenda.textContent = 'endereço encontrado, mas sem localização exata no mapa';
+    if (!resposta.ok) {
+      console.warn(`Nominatim respondeu ${resposta.status} para: "${consulta}"`);
+      continue; // tenta o próximo nível em vez de travar
+    }
+
+    const resultados = await resposta.json();
+    console.log(`Consulta: "${consulta}" → ${resultados.length} resultado(s)`);
+
+    if (resultados && resultados.length > 0) {
+      resultado = resultados[0];
+      break; // achou, para de tentar buscas mais genéricas
+    }
+  }
+
+  if (!resultado) {
+    legenda.textContent = 'não foi possível localizar esse endereço no mapa';
+    if (marcador) {
+      mapa.removeLayer(marcador);
+      marcador = null;
+    }
+    mapa.setView([-14.235, -51.925], 4); // volta pra visão geral do Brasil
     return;
   }
 
-  const { lat, lon } = resultados[0];
-  const posicao = [parseFloat(lat), parseFloat(lon)];
-
+  const posicao = [parseFloat(resultado.lat), parseFloat(resultado.lon)];
   mapa.setView(posicao, 16);
 
   if (marcador) {
