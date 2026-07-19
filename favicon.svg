@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="30" fill="#10203d"/>
+  <circle cx="32" cy="32" r="24" fill="none" stroke="#e8a318" stroke-width="3" stroke-dasharray="6 5"/>
+  <text x="32" y="38" font-family="monospace" font-size="16" font-weight="700" fill="#e8a318" text-anchor="middle">CEP</text>
+</svg>
