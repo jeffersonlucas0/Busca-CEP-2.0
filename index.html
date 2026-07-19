@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca CEP</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="painel">
+    <div class="marca">
+        <span class="selo">CEP</span>
+        <span class="marca-texto">LOCALIZADOR DE ENDEREÇO</span>
+    </div>
+
+    <h1>Encontre qualquer<br>endereço no mapa</h1>
+    <p class="subtitulo">Digite um CEP brasileiro e veja o endereço completo, com a localização precisa no mapa.</p>
+
+    <form id="form-cep" novalidate>
+        <label for="cep">CEP</label>
+        <div class="campo-busca">
+            <input
+            type="text"
+            id="cep"
+            name="cep"
+            placeholder="00000-000"
+            inputmode="numeric"
+            autocomplete="postal-code"
+            maxlength="9"
+            autofocus
+            >
+            <button type="submit" id="buscar">Buscar</button>
+     </div>
+    </form>
+
+    <div id="resultado" class="resultado" aria-live="polite"></div>
+
+    <footer class="rodape">dados: viacep.com · mapa: openstreetmap</footer>
+    </aside>
+
+    <main class="mapa-area">
+        <div id="mapa"></div>
+        <div id="mapa-legenda" class="mapa-legenda">mapa - busque um cep para localizar</div>
+    </main>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="./script.js"></script>
+    
+</body>
+</html>
